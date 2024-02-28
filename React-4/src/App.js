@@ -5,6 +5,7 @@ import "./styles/App.css"//імпортували стилі CSS
 import PostItem from './components/Postitem';
 import Postlist from './components/Postlist';
 import MyButton from './components/UI/Button/MyButton'
+import MyInput from './components/UI/Input/MyInput'
  
 function App() {
     const [posts,setPosts] = useState ( [
@@ -12,13 +13,25 @@ function App() {
       {id:2, title:"EXEMPLE props 2" , body :"можем прописувати любі дані" },
       {id:3, title:"EXEMPLE props 3" , body :"любого компоненту де звертаємось через props" },
     ]) // Створили стан із масивом постів
+
+    const [title,setTitle] = useState ("назва в середині")
+    const addNewPost = (e) =>{
+      e.preventDefault()//цією функцією ми запобігаєм default-ну поведінку браузера (щоб синхронізувати свіже вписану інформацію користувача )
+      //Тобто цією функцією запобігаємо обновленню сторінки при нажатті кнопки
+    }
     
   return (
      <div className="App"> 
       <form>
-        <input type="text" placeholder='Назва посту'/>
-        <input type="text" placeholder='Опис посту'/>
-        <MyButton >Створити пост</MyButton>
+        {/*Управляємий компонент*/}
+        <MyInput 
+        value={title}
+        onChange={e => setTitle(e.target.value)/*цією функцією ми відслідковуємо що користувач вводить*/}
+        type="text" 
+        placeholder='Назва посту'/>
+        {/*Тепер ми получаєм дані за допомогою керуючого Input */}
+        <MyInput type="text" placeholder='Опис посту'/>
+        <MyButton onClick={addNewPost /*додаєм функцію*/}>Створити пост</MyButton>
       </form>
          <Postlist posts={posts} title="Список постів 1"/>
      </div>
