@@ -15,12 +15,23 @@ function App() {
     ]) // Створили стан із масивом постів
 
     const [title,setTitle] = useState ("назва в середині")
-    const bodyInputRef = useRef()
+    const [body, setBody] = useState ("")
+
     const addNewPost = (e) =>{
       e.preventDefault()//цією функцією ми запобігаєм default-ну поведінку браузера (щоб синхронізувати свіже вписану інформацію користувача )
       //Тобто цією функцією запобігаємо обновленню сторінки при нажатті кнопки
-      console.log(bodyInputRef.current.value)
-    }
+      const newPost = {//створюєм новий пост 
+        id:Date.now(), //тут ми отримуємо id(він завжди має бути унікальний) із поточної дати
+        title,  //передаєм заголовок у новий масив 
+        body  //передаєм тіло у новий масив 
+      }
+      setPosts([...posts,newPost])//...posts - цим значенням ми розвертаєм старий масив
+      //тут ми верхній обєкт додаєм у масив постів
+      setTitle("")
+      setBody("")
+      //після створення посту буди очищатися input (обнуляєм)
+     }
+    
     
   return (
      <div className="App"> 
@@ -34,7 +45,8 @@ function App() {
         {/*Тепер ми получаєм дані за допомогою керуючого Input */}
         {/*Неуправляємий/неконтролюючий компонент */}
         <MyInput
-        ref={bodyInputRef}
+         value={body}
+         onChange={e => setBody(e.target.value)/*цією функцією ми міняєм стан */}
         type="text"
         placeholder='Опис посту'/>
         <MyButton onClick={addNewPost /*додаєм функцію*/}>Створити пост</MyButton>
