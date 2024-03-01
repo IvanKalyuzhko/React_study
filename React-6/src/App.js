@@ -14,22 +14,16 @@ function App() {
       {id:3, title:"EXEMPLE props 3" , body :"любого компоненту де звертаємось через props" },
     ]) // Створили стан із масивом постів
 
-    const [title,setTitle] = useState ("назва в середині")
+    const [post,setPost] = useState ({title:"",body:""})
     const [body, setBody] = useState ("")
 
     const addNewPost = (e) =>{
       e.preventDefault()//цією функцією ми запобігаєм default-ну поведінку браузера (щоб синхронізувати свіже вписану інформацію користувача )
       //Тобто цією функцією запобігаємо обновленню сторінки при нажатті кнопки
-      const newPost = {//створюєм новий пост 
-        id:Date.now(), //тут ми отримуємо id(він завжди має бути унікальний) із поточної дати
-        title,  //передаєм заголовок у новий масив 
-        body  //передаєм тіло у новий масив 
-      }
-      setPosts([...posts,newPost])//...posts - цим значенням ми розвертаєм старий масив
+      setPosts([...posts,{...post,id:Date.now()}])//тут ми створюєм новий обєкт прямо в масиві, розвернути інфу із посту та додати id
       //тут ми верхній обєкт додаєм у масив постів
-      setTitle("")
-      setBody("")
-      //після створення посту буди очищатися input (обнуляєм)
+      setPost({title:"",body:""})
+      //після створення посту будуть очищатися input (обнуляєм)
      }
     
     
@@ -38,15 +32,15 @@ function App() {
       <form>
         {/*Управляємий компонент*/}
         <MyInput 
-        value={title}
-        onChange={e => setTitle(e.target.value)/*цією функцією ми відслідковуємо що користувач вводить*/}
+        value={post.title}
+        onChange={e => setPost({...post, title: e.target.value})/*тут визиваєм функцію setPost та передаєм туди обєкт(розгортаєм старий пост та перезатераєм потрібне нам поле в імпут)*/}
         type="text" 
         placeholder='Назва посту'/>
         {/*Тепер ми получаєм дані за допомогою керуючого Input */}
         {/*Неуправляємий/неконтролюючий компонент */}
         <MyInput
-         value={body}
-         onChange={e => setBody(e.target.value)/*цією функцією ми міняєм стан */}
+         value={post.body}
+         onChange={e => setPost({...post, body: e.target.value})/*тут визиваєм функцію setPost та передаєм туди обєкт(розгортаєм старий пост та перезатераєм потрібне нам поле в імпут)*/}
         type="text"
         placeholder='Опис посту'/>
         <MyButton onClick={addNewPost /*додаєм функцію*/}>Створити пост</MyButton>
