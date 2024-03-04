@@ -1,6 +1,5 @@
-import React from "react"
-import MyInput from "react"
-import MyButton from "react"
+import React, { useState } from 'react'
+import "../styles/App.css"//імпортували стилі CSS
 
 const PostForm = ({create}) => {
     const [post, setPost] = useState({title:'',body:''});
@@ -17,7 +16,7 @@ const PostForm = ({create}) => {
     return (
        <form>
         {/*Управляємий компонент*/}
-        <MyInput 
+        <input 
           value={post.title}
           onChange={e => setPost({...post, title: e.target.value})/*тут визиваєм функцію setPost та передаєм туди обєкт(розгортаєм старий пост та перезатераєм потрібне нам поле в імпут)*/}
           type="text" 
@@ -25,13 +24,13 @@ const PostForm = ({create}) => {
         />
         {/*Тепер ми получаєм дані за допомогою керуючого Input */}
         {/*Неуправляємий/неконтролюючий компонент */}
-        <MyInput
+        <input
          value={post.body}
          onChange={e => setPost({...post, body: e.target.value})/*тут визиваєм функцію setPost та передаєм туди обєкт(розгортаєм старий пост та перезатераєм потрібне нам поле в імпут)*/}
          type="text"
          placeholder='Опис посту'
         />
-        <MyButton onClick={addNewPost /*додаєм функцію*/}>Створити пост</MyButton>
+        <button onClick={addNewPost /*додаєм функцію*/}>Створити пост</button>
       </form>
     )
 }
