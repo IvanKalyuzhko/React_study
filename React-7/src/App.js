@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import Counter from './components/Counter';
 import ClassCounter from './components/СlassCounter';
 import "./styles/App.css"//імпортували стилі CSS
@@ -18,27 +18,35 @@ function App() {
 
     const [selectedSort, setSelectedSort] = useState("") 
     const [searchQuery,setSearchQuery] = useState("") 
-     
 
+    const sortedPosts = useMemo(() => {
+      if(selectedSort) {
+        return [...posts].sort((a,b) => a[selectedSort].localeCompare(b[selectedSort]))
+      }
+      return posts
+    },[selectedSort,posts])
+
+    const sortedAndSearchedPosts = useMemo(()=>{
+      return sortedPosts.filter(post => post.title.toLowerCase().includes(searchQuery))
+    },[searchQuery,sortedPosts])
+     
     const createPost = (newPost) =>{
       setPosts([...posts,newPost])
     }
-    
     const removePost = (post) => { 
        setPosts(posts.filter(p => p.id !== post.id))
     }
     const sortPosts = (sort) =>{
       setSelectedSort(sort)
-      setPosts([...posts].sort((a,b)=> a[sort].localeCompare(b[sort]))) 
-     
     }
-    
   return (
      <div className="App">
          <PostForm create={createPost}/>
          <hr style={{margin:"15px 0"}}/>
          <div>
-          <MyInput 
+          <MyInput //створюю вікно записуу
+               value={searchQuery}
+               onChange={e => setSearchQuery(e.target.value)}
                placeholder='Пошук'
           />
           <MySelect 
@@ -51,8 +59,8 @@ function App() {
             ]}
           />
          </div>
-         {posts.length!==0 
-            ?<Postlist remove={removePost} posts={posts} title="Список постів 1"/>
+         {sortedAndSearchedPosts.length!==0 
+            ?<Postlist remove={removePost} posts={sortedAndSearchedPosts} title="Список постів 1"/>
             :<div><h1 style={{textAlign:'center'}}>Пости не знайдено</h1></div>
          }
      </div>
@@ -66,3 +74,5 @@ export default App;
 
 //useState - хук управління станом
 //useRef - хук за допомогою якого ми можем отримувати напряму доступ до дом-елемента (маніпулювати дом-деревом напряму не рекомендують в Реакт ,але є ситуації коли це необхідно)
+//useMemo(callback,[]) - хук приймає деякий callback (деяку функцію обратного визову) , а іншим параметром приймає масив залежності (цей хук робе обчислення ,запамятовуючи результат цих обчислень і кешує)
+// callback - має повертати результат якихось обчислень 
