@@ -8,6 +8,7 @@ import MyButton from './components/UI/Button/MyButton'
 import MyInput from './components/UI/Input/MyInput'
 import PostForm from './components/PostForm'
 import MySelect from './components/UI/Select/MySelect';
+import PostFilter from './components/PostFilter';
  
 function App() {
     const [posts,setPosts] = useState ( [
@@ -16,20 +17,19 @@ function App() {
       {id:3, title:"EXEMPLE props 3" , body :"любого компоненту де звертаємось через props" },
     ]) 
 
-    const [selectedSort, setSelectedSort] = useState("") 
-    const [searchQuery,setSearchQuery] = useState("") //створюєм стан щоб керувати input
+    const [filter,setFilter] = useState({sort:"",query:""})//тут обєкт утримує два поля 
     //Для того щоб реалізувати пошук необхідно зробити його певну фільтрацію і удаляти непотрібні елементи із масиву(але якщо їх видаляти то ми не зможем повертати їх назад)
 
     const sortedPosts = useMemo(() => {
-      if(selectedSort) { //якщо selectedSort існує то ми будем повертати відсортований масив
-        return [...posts].sort((a,b) => a[selectedSort].localeCompare(b[selectedSort]))
+      if(filter.sort) { //якщо filter.sort існує то ми будем повертати відсортований масив
+        return [...posts].sort((a,b) => a[filter.sort].localeCompare(b[filter.sort]))
       }
       return posts //в іншому випадку буде повертатися масив постів
-    },[selectedSort,posts])
+    },[filter.sort,posts])
 
     const sortedAndSearchedPosts = useMemo(()=>{
-      return sortedPosts.filter(post => post.title.toLowerCase().includes(searchQuery))//тут ми зробили так щоб в масиві залишились тілки ті пости ,назви яких містять потрібні для нас пошуковий запит
-    },[searchQuery,sortedPosts])//тепер в масив залежності попадає пошуковий рядок і уже відсортований масив
+      return sortedPosts.filter(post => post.title.toLowerCase().includes(filter.query))//тут ми зробили так щоб в масиві залишились тілки ті пости ,назви яких містять потрібні для нас пошуковий запит
+    },[filter.query,sortedPosts])//тепер в масив залежності попадає пошуковий рядок і уже відсортований масив
     //toLowerCase() - функція яка ігнорує регістр 
      
     const createPost = (newPost) =>{
@@ -38,29 +38,14 @@ function App() {
     const removePost = (post) => { 
        setPosts(posts.filter(p => p.id !== post.id))
     }
-    const sortPosts = (sort) =>{
-      setSelectedSort(sort)
-    }
   return (
      <div className="App">
          <PostForm create={createPost}/>
          <hr style={{margin:"15px 0"}}/>
-         <div>
-          <MyInput //створюю вікно записуу
-               value={searchQuery}
-               onChange={e => setSearchQuery(e.target.value)}
-               placeholder='Пошук'
-          />
-          <MySelect 
-            value={selectedSort}
-            onChange={sortPosts} 
-            defaultValue="Сортування"
-            options={[
-              {value:"title", name:"По назві"},
-              {value:"body", name:"По опису"},
-            ]}
-          />
-         </div>
+         <PostFilter 
+         filter ={filter} //передаєм стан у PostFilter 
+         setFilter={setFilter}//передаєм функцію у PostFilter 
+         />
          {sortedAndSearchedPosts.length!==0 
             ?<Postlist remove={removePost} posts={sortedAndSearchedPosts} title="Список постів 1"/>
             :<div><h1 style={{textAlign:'center'}}>Пости не знайдено</h1></div>
