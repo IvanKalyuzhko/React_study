@@ -1,4 +1,5 @@
 import React from "react";
+import MyButton from '../components/UI/Button/MyButton'
 
 //props - певні вхідні дані які може приймати компонент 
 const PostItem = (props) => {
@@ -11,7 +12,7 @@ const PostItem = (props) => {
           </div>
          </div>
           <div className='post__btns'>
-           <button>Видалити</button>
+           <MyButton onClick={() => props.remove(props.post)} >Видалити</MyButton>
           </div>
       </div>
     )

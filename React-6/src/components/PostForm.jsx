@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import "../styles/App.css"//імпортували стилі CSS
+import MyButton from '../components/UI/Button/MyButton'
+
 
 const PostForm = ({create}) => {
     const [post, setPost] = useState({title:'',body:''});
@@ -30,7 +31,7 @@ const PostForm = ({create}) => {
          type="text"
          placeholder='Опис посту'
         />
-        <button onClick={addNewPost /*додаєм функцію*/}>Створити пост</button>
+        <MyButton onClick={addNewPost /*додаєм функцію*/}>Створити пост</MyButton>
       </form>
     )
 }
