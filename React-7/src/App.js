@@ -43,13 +43,10 @@ function App() {
          <PostForm create={createPost}/>
          <hr style={{margin:"15px 0"}}/>
          <PostFilter 
-         filter ={filter} //передаєм стан у PostFilter 
+         filter ={filter} //передаєм функцію у PostFilter 
          setFilter={setFilter}//передаєм функцію у PostFilter 
          />
-         {sortedAndSearchedPosts.length!==0 
-            ?<Postlist remove={removePost} posts={sortedAndSearchedPosts} title="Список постів 1"/>
-            :<div><h1 style={{textAlign:'center'}}>Пости не знайдено</h1></div>
-         }
+          <Postlist remove={removePost} posts={sortedAndSearchedPosts} title="Список постів 1"/>
      </div>
   )
 }
