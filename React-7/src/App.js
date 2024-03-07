@@ -17,18 +17,20 @@ function App() {
     ]) 
 
     const [selectedSort, setSelectedSort] = useState("") 
-    const [searchQuery,setSearchQuery] = useState("") 
+    const [searchQuery,setSearchQuery] = useState("") //створюєм стан щоб керувати input
+    //Для того щоб реалізувати пошук необхідно зробити його певну фільтрацію і удаляти непотрібні елементи із масиву(але якщо їх видаляти то ми не зможем повертати їх назад)
 
     const sortedPosts = useMemo(() => {
-      if(selectedSort) {
+      if(selectedSort) { //якщо selectedSort існує то ми будем повертати відсортований масив
         return [...posts].sort((a,b) => a[selectedSort].localeCompare(b[selectedSort]))
       }
-      return posts
+      return posts //в іншому випадку буде повертатися масив постів
     },[selectedSort,posts])
 
     const sortedAndSearchedPosts = useMemo(()=>{
-      return sortedPosts.filter(post => post.title.toLowerCase().includes(searchQuery))
-    },[searchQuery,sortedPosts])
+      return sortedPosts.filter(post => post.title.toLowerCase().includes(searchQuery))//тут ми зробили так щоб в масиві залишились тілки ті пости ,назви яких містять потрібні для нас пошуковий запит
+    },[searchQuery,sortedPosts])//тепер в масив залежності попадає пошуковий рядок і уже відсортований масив
+    //toLowerCase() - функція яка ігнорує регістр 
      
     const createPost = (newPost) =>{
       setPosts([...posts,newPost])
@@ -74,5 +76,5 @@ export default App;
 
 //useState - хук управління станом
 //useRef - хук за допомогою якого ми можем отримувати напряму доступ до дом-елемента (маніпулювати дом-деревом напряму не рекомендують в Реакт ,але є ситуації коли це необхідно)
-//useMemo(callback,[]) - хук приймає деякий callback (деяку функцію обратного визову) , а іншим параметром приймає масив залежності (цей хук робе обчислення ,запамятовуючи результат цих обчислень і кешує)
-// callback - має повертати результат якихось обчислень 
+//useMemo(callback,[]) - хук першим параметром приймає деякий callback (деяку функцію обратного визову) , а другим параметром приймає масив залежності (цей хук робе обчислення ,запамятовуючи результат цих обчислень і кешує)
+// callback - має повертати результат якихось обчислень (callback буде визваний в тому випадку коли якась із залежних в масиві змінить своє значення)
