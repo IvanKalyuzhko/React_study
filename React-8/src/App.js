@@ -9,6 +9,7 @@ import MyInput from './components/UI/Input/MyInput'
 import PostForm from './components/PostForm'
 import MySelect from './components/UI/Select/MySelect';
 import PostFilter from './components/PostFilter';
+import MyModal from './components/UI/MyModal/MuModal';
  
 function App() {
     const [posts,setPosts] = useState ( [
@@ -16,35 +17,41 @@ function App() {
       {id:2, title:"EXEMPLE props 2" , body :"можем прописувати любі дані" },
       {id:3, title:"EXEMPLE props 3" , body :"любого компоненту де звертаємось через props" },
     ]) 
+    const [filter,setFilter] = useState({sort:"",query:""})
 
-    const [filter,setFilter] = useState({sort:"",query:""})//тут обєкт утримує два поля 
-    //Для того щоб реалізувати пошук необхідно зробити його певну фільтрацію і удаляти непотрібні елементи із масиву(але якщо їх видаляти то ми не зможем повертати їх назад)
-
+    // стан який відповідає за видимість/невидимість модального вікна якою ми можем керувати
+    const [modal, setModal] = useState(false) //по замовчуванню значення false
     const sortedPosts = useMemo(() => {
-      if(filter.sort) { //якщо filter.sort існує то ми будем повертати відсортований масив
+      if(filter.sort) {
         return [...posts].sort((a,b) => a[filter.sort].localeCompare(b[filter.sort]))
       }
-      return posts //в іншому випадку буде повертатися масив постів
+      return posts 
     },[filter.sort,posts])
-
     const sortedAndSearchedPosts = useMemo(()=>{
-      return sortedPosts.filter(post => post.title.toLowerCase().includes(filter.query))//тут ми зробили так щоб в масиві залишились тілки ті пости ,назви яких містять потрібні для нас пошуковий запит
-    },[filter.query,sortedPosts])//тепер в масив залежності попадає пошуковий рядок і уже відсортований масив
-    //toLowerCase() - функція яка ігнорує регістр 
+      return sortedPosts.filter(post => post.title.toLowerCase().includes(filter.query))
+    },[filter.query,sortedPosts])
      
     const createPost = (newPost) =>{
       setPosts([...posts,newPost])
+      setModal(false) // створюєм стан false для setModal щоб модальне вікно зникало при створенні на ньому посту
     }
     const removePost = (post) => { 
        setPosts(posts.filter(p => p.id !== post.id))
     }
   return (
      <div className="App">
-         <PostForm create={createPost}/>
+         {/*створюєм кнопку при нажатті якої буде показуватись модальне вікно*/}
+         <MyButton onClick={() => setModal(true)}>{/*сюди вішаєм onClick у якому змінюєм стан setModal на true*/}
+          Створити модальне вікно
+         </MyButton> 
+         <MyModal visible={modal} setVisible={setModal}> {/*Сюди додаєм пропси та функцію setModal*/}
+          <PostForm create={createPost}/>
+         </MyModal>
+         
          <hr style={{margin:"15px 0"}}/>
          <PostFilter 
-         filter ={filter} //передаєм функцію у PostFilter 
-         setFilter={setFilter}//передаєм функцію у PostFilter 
+         filter ={filter}
+         setFilter={setFilter}
          />
           <Postlist remove={removePost} posts={sortedAndSearchedPosts} title="Список постів 1"/>
      </div>
