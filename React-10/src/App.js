@@ -13,6 +13,7 @@ import MyModal from './components/UI/MyModal/MuModal';
 import { usePosts } from './hooks/usePosts';
 import axios from 'axios';
 import PostService from './API/PostService';
+import Loader from './components/UI/Loader/Loader';
  
 function App() {
     const [posts,setPosts] = useState ([]) 
@@ -59,7 +60,7 @@ function App() {
          setFilter={setFilter}
          />
          {isPostsLoading // тут робим умову в якій при значенні true буде відбуватись умова 
-          ?<h1>Загрузка...</h1>// значення true
+          ?<Loader/>// значення true
           :<Postlist remove={removePost} posts={sortedAndSearchedPosts} title="Список постів 1"/>// значення false
          }
      </div>
