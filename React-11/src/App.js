@@ -20,11 +20,10 @@ function App() {
     const [posts,setPosts] = useState ([]) 
     const [filter,setFilter] = useState({sort:"",query:""})
     const [modal, setModal] = useState(false) 
-    const sortedAndSearchedPosts = usePosts(posts,filter.sort , filter.query) //тут ми визиваєм створений хук всередині компоненту 
-    //Цей стан буде відповідати за відображення сторінки яка прогружається інтернетом (тут ми створим Заголовок "Загрузка" для показу користувачеві поки пости прогружаються сервером)
-    const [isPostsLoading, setIsPostsLoading] = useState(false) //тут створюєм стан по замувчуванню який буде false
-    const [] = useFetching(async ()=> {
-
+    const sortedAndSearchedPosts = usePosts(posts,filter.sort , filter.query)  
+    const [fetchPosts, isPostsLoading , postError] = useFetching(async ()=> {
+      const posts = await PostService.getAll()// тут отримуємо пости із сервера і засетим їх в стан
+        setPosts(posts)
     })
     
     useEffect(()=> {
@@ -34,15 +33,6 @@ function App() {
     const createPost = (newPost) =>{
       setPosts([...posts,newPost])
       setModal(false) 
-    }
-    async function fetchPosts() {
-      setIsPostsLoading(true)// перед тим як відправити запит ми робим значення true 
-      //Ця функція буде відображати користувачу 1 секунду "Загрузку" постів
-      setTimeout(async ()=> { //тут створили фейковий таймаут на 1 секунду 
-        const posts = await PostService.getAll()
-        setPosts(posts)
-        setIsPostsLoading(false)// після того як запит закінчився (коли пости прогрузились) , робим значення false
-      },1000)
     }
 
     const removePost = (post) => { 
@@ -63,9 +53,9 @@ function App() {
          filter ={filter}
          setFilter={setFilter}
          />
-         {isPostsLoading // тут робим умову в якій при значенні true буде відбуватись умова 
-          ?<Loader/>// значення true
-          :<Postlist remove={removePost} posts={sortedAndSearchedPosts} title="Список постів 1"/>// значення false
+         {isPostsLoading 
+          ?<Loader/>
+          :<Postlist remove={removePost} posts={sortedAndSearchedPosts} title="Список постів 1"/>
          }
      </div>
   )
