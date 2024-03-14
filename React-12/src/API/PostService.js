@@ -2,11 +2,11 @@ import axios from "axios"
 
 export default class PostService {//тут створюєм клас який по default експортуєм
     //тут створюєм статичну асинхронну функцію яка буде повертати список постів
-    static async getAll (Limit=10,page=1){ //тут функція буде приймати ліміт і номер сторінки за замовченням для того щоб сервер дав інформацію по них
+    static async getAll (limit=10,page=1){ //тут функція буде приймати ліміт і номер сторінки за замовченням для того щоб сервер дав інформацію по них
         const response = await axios.get("https://jsonplaceholder.typicode.com/posts",{
             //ми можем другим параметром функцією axios.get передати ще запрос де вказуєм поле params і передаєм туди необхідні значення 
             params:{ //тут передаєм параметри запросом на сервер (Limit=10,page=1)
-                _Limit:Limit,
+                _Limit:limit,
                 _page:page
             }
         })

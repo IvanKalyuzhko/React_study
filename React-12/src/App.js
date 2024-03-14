@@ -15,25 +15,29 @@ import axios from 'axios';
 import PostService from './API/PostService';
 import Loader from './components/UI/Loader/Loader';
 import { useFetching } from './hooks/useFetching';
+import { getPageCount, getPagesArray } from './utils/pages';
  
 function App() {
     const [posts,setPosts] = useState ([]) 
     const [filter,setFilter] = useState({sort:"",query:""})
     const [modal, setModal] = useState(false) 
-    const [totalCount, setTotalCount] = useState(0) //створюєм стан в який будем розміщувати загальну кількість постів (за замовчуванням ставим 0 бо не знаєм скільки постів буде поки ми не отримали відповідь із серверу)
-    const [Limit, setLimit] = useState(10)//створюєм окремий стан для ліміту
+    const [totalPages, setTotalPages] = useState(0) //створюєм стан в якому будем зберігати загальну кількість сторінок 
+    const [limit, setLimit] = useState(10)//створюєм окремий стан для ліміту
     const [page, setPage] = useState(1)//створюєм окремий стан для номеру сторінки
     const sortedAndSearchedPosts = usePosts(posts,filter.sort , filter.query)  
+
+    let pagesArray= getPagesArray(totalPages)//тут визиваєм функцію при якій реалізуєм кнопки при нажатті яких буде змінюватись сторінка
+
     const [fetchPosts, isPostsLoading , postError] = useFetching(async ()=> {
-      // тут отримуємо пости із сервера і засетим їх в стан
-      const response = await PostService.getAll(Limit,page)//передаєм параметри в функцію getAll нашого постсервісу (тепер сервер зрозуміє що нам потрібно реалізувати нашу пагінацію і поверне нам x-total-count )
+      const response = await PostService.getAll(limit,page)//передаєм параметри в функцію getAll нашого постсервісу (тепер сервер зрозуміє що нам потрібно реалізувати нашу пагінацію і поверне нам x-total-count )
         setPosts(response.data)//тут сетим поле data у response
-        setTotalCount(response.headers['x-total-count'])//після того як ми отримали відповідь із серверу, звертаємось до headers і звідти достаєм хедер x-total-count що є на сервері
+        const totalCount = response.headers['x-total-count']//тут ми достаємо загальну кількість постів (цю загальну кількість постів і ліміт передаємо в наступну функцію )
+        setTotalPages(getPageCount(totalCount,limit))//в цю функцію ми передаєм загальну кількість постів а другим параметром ліміт
     })
     
-    useEffect(()=> {
-      fetchPosts() 
-    },[])
+    useEffect(()=> {//useEffect буде слідкувати за змінами на сторінці і ми будем отримувати необхідні дані
+      fetchPosts() //щоб визвати функцію fetchPosts потрібно в useEffect в масив залежності додати page
+    },[page])
 
     const createPost = (newPost) =>{
       setPosts([...posts,newPost])
@@ -42,6 +46,12 @@ function App() {
 
     const removePost = (post) => { 
        setPosts(posts.filter(p => p.id !== post.id))
+    }
+
+    //цією фунцією ми підгружаєм нову порцію даних при переході на іншу сторінку 
+    const changePage = (page) =>{//ця функція змінює номер сторінки і при її зміні змінює дані на ній 
+      setPage(page)
+      //коли ми змінили номер сторінки потрібно визвати функцію fetchPosts (всередині функції ми уже передаєм запрос на необхідні для нас ліміти і номер сторінки)
     }
   return (
      <div className="App">
@@ -62,6 +72,15 @@ function App() {
           ?<Loader/>
           :<Postlist remove={removePost} posts={sortedAndSearchedPosts} title="Список постів 1"/>
          }
+         <div className='page__wrapper'>
+           {pagesArray.map(p=>//тут рисуєм кнопки через функцію map 
+           <span
+            onClick={()=>changePage(p)}//при нажатті на кнопку будем змінювати стан page за допомогою функції changePage
+            key={p}// додаєм ключ за номером сторінки (р) 
+            className={page === p ? 'page page__current' : 'page'}//тут робим умову - якщо елемент ітерації у функції map рівняється номеру поточної сторінки то будуть додаватись одні стилі , в іншому випадку інші стилі
+            >{p}</span>//для кожного елементу створюєм кнопку 
+           )}
+         </div>
      </div>
   )
 }
