@@ -20,10 +20,15 @@ function App() {
     const [posts,setPosts] = useState ([]) 
     const [filter,setFilter] = useState({sort:"",query:""})
     const [modal, setModal] = useState(false) 
+    const [totalCount, setTotalCount] = useState(0) //створюєм стан в який будем розміщувати загальну кількість постів (за замовчуванням ставим 0 бо не знаєм скільки постів буде поки ми не отримали відповідь із серверу)
+    const [Limit, setLimit] = useState(10)//створюєм окремий стан для ліміту
+    const [page, setPage] = useState(1)//створюєм окремий стан для номеру сторінки
     const sortedAndSearchedPosts = usePosts(posts,filter.sort , filter.query)  
     const [fetchPosts, isPostsLoading , postError] = useFetching(async ()=> {
-      const posts = await PostService.getAll()// тут отримуємо пости із сервера і засетим їх в стан
-        setPosts(posts)
+      // тут отримуємо пости із сервера і засетим їх в стан
+      const response = await PostService.getAll(Limit,page)//передаєм параметри в функцію getAll нашого постсервісу (тепер сервер зрозуміє що нам потрібно реалізувати нашу пагінацію і поверне нам x-total-count )
+        setPosts(response.data)//тут сетим поле data у response
+        setTotalCount(response.headers['x-total-count'])//після того як ми отримали відповідь із серверу, звертаємось до headers і звідти достаєм хедер x-total-count що є на сервері
     })
     
     useEffect(()=> {
