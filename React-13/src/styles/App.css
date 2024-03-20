@@ -22,6 +22,10 @@
     align-items: center;
 }
 
+.post__btns{
+    display: flex; /*це робить положення кнопок посту поряд одна біля одної */
+}
+
 /*сюди вставив код із react-transition-group*/
 .post-enter {
     transform: translateX(-300px)

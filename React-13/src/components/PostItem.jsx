@@ -1,8 +1,11 @@
 import React from "react";
 import MyButton from '../components/UI/Button/MyButton'
+import {useNavigate } from 'react-router-dom';
 
 //props - певні вхідні дані які може приймати компонент 
 const PostItem = (props) => {
+  //Переходи на інші сторінки ми можем робити за допомогою спеціального хука useNavigate
+    const navigate = useNavigate()//створюєм функцію щоб для кожного посту було своє посилання
     return (
        <div className='post'>
          <div className='post__content'>
@@ -12,6 +15,7 @@ const PostItem = (props) => {
           </div>
          </div>
           <div className='post__btns'>
+           <MyButton onClick={() => navigate(`/posts/${props.post.id}`)} >Відкрити</MyButton> {/*тут створюєм динамічний шлях за яким будем вказувати id посту якого вибере користувач (треба створити компонент за яким користувач переходитиме на сторінку посту )*/}
            <MyButton onClick={() => props.remove(props.post)} >Видалити</MyButton>
           </div>
       </div>
