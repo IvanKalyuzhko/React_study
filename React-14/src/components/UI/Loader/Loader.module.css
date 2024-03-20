@@ -1,0 +1,16 @@
+.Loader {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border:2px dashed rebeccapurple;
+    animation: rotate 1s infinite linear
+}
+
+@keyframes rotate {/*Ключові кадри*/
+    from {/*Початкова точка*/
+         transform: rotate(0deg) scale(1);/*deg - це градус*//*scale - величина радіуса*/
+    }
+    to {/*Кінцева точка*/
+        transform: rotate(360deg) scale(1.8);/*deg - це градус*//*scale - величина радіуса*/
+    }
+}
