@@ -1,18 +1,26 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Routes, Route} from 'react-router-dom';
 import {privateRoutes, pablicRoutes} from '../router'
+import { AuthContext } from '../context';
+import Loader from './UI/Loader/Loader';
 
 const AppRouter = () => {
-    // робим доступ для користувачів за допомогою змінної isAuth яка буде відкривати пости для авторизованих користувачів
-    const isAuth = false 
+   
+    const {isAuth,isLoading} = useContext(AuthContext) //тут ми отримуєм доступ до перемінної isAuth (як аргумент передаєм сюди контекст - AuthContext)
+    if(isLoading) { // тут робим умову (якщо isLoading = true то  )
+        return <Loader/> // тут необхідно повернути якийсь jsx ( щоб поки йшла загрузка показувати якийсь макет або зображення)
+
+    }
+
     return (
-     isAuth // тут тернальним оператором вказуєм функцію за якою авторизований користувач зможе відкривати пости (privateRoutes) , в іншому випадку буде pablicRoutes
+     isAuth
       ?   <Routes> 
-            {/*Імпортуємо сюди масиви із шляхами на сторінки  */}
-            {privateRoutes.map(route =>// тут ітеруємо масив 
-             <Route Component={route.component} // тут для кожного компоненту масиву відресувати відповідний Route
-               path={route.path}// тут передаєм шлях та як пропс передаєм компоненти
+            {privateRoutes.map(route =>
+             <Route Component={route.component} 
+               path={route.path}
                exact={route.exact}
+               // тут додаєм ключ на маршрути 
+               key={route.path}// в якості ключа на маршрути використаєм поле path так як воно завжди унікальне 
               />
              )}
           </Routes>
@@ -21,6 +29,8 @@ const AppRouter = () => {
               <Route Component={route.component}
                path={route.path}
                exact={route.exact}
+               // тут додаєм ключ на маршрути 
+               key={route.path}// в якості ключа на маршрути використаєм поле path так як воно завжди унікальне 
                />
               )}
          </Routes>
